@@ -28,6 +28,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using AutoMapper;
+using Persistencia.DapperConexion;
+using Persistencia.DapperConexion.Instructor;
 
 namespace WebAPI
 {
@@ -43,9 +45,14 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //cadena de conexion
             services.AddDbContext<CursosOnlineContext>(opt =>{
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            //dapper para pasarle la cadena de conexion a la clase
+            services.AddOptions();
+            services.Configure<ConexionConfiguracion>(Configuration.GetSection("ConnectionStrings"));
 
             services.AddMediatR(typeof(Consulta.Handler).Assembly);
             //para q requiera en los endpoints q el usuario este autorizado
@@ -82,6 +89,10 @@ namespace WebAPI
 
             //para q funcione el mapper
             services.AddAutoMapper(typeof(Consulta.Handler));
+
+            //para poder usar el dapper
+            services.AddTransient<IFactoryConnection,FactoryConnection>();
+            services.AddScoped<IInstructor,InstructorRepositorio>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
