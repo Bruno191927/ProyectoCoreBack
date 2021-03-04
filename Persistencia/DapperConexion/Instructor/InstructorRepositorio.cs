@@ -22,9 +22,28 @@ namespace Persistencia.DapperConexion.Instructor
             throw new NotImplementedException();
         }
 
-        public Task<int> Nuevo(InstructorModel parametros)
+        public async Task<int> Nuevo(string nombre,string apellidos,string grado)
         {
-            throw new NotImplementedException();
+            var storeProcedure = "usp_Instructor_Nuevo";
+            try{
+                var connection = _factoryConnection.GetConnection();
+                var resultado = await connection.ExecuteAsync(
+                    storeProcedure,
+                    new {
+                        InstructorId = Guid.NewGuid(),
+                        Nombre = nombre,
+                        Apellidos = apellidos,
+                        Grado = grado
+                    },
+                    commandType : CommandType.StoredProcedure
+                );
+                _factoryConnection.CloseConnection();
+                return resultado;
+            }
+            catch(Exception e){
+                throw new Exception("No se pudo insertar",e);
+            }
+
         }
 
         public async Task<IEnumerable<InstructorModel>> ObtenerLista()
