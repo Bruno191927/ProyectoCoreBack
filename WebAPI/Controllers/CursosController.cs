@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebAPI.Controllers
 {
     //http://localhost:5000/api/Cursos
-    [Route("api/[controller]")]
-    [ApiController]
+    /*[Route("api/[controller]")]
+    [ApiController]*/
     public class CursosController : MiControllerBase
     {
         [HttpGet]
