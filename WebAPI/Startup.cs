@@ -31,6 +31,7 @@ using AutoMapper;
 using Persistencia.DapperConexion;
 using Persistencia.DapperConexion.Instructor;
 using Microsoft.OpenApi.Models;
+using Persistencia.DapperConexion.Paginacion;
 
 namespace WebAPI
 {
@@ -103,6 +104,9 @@ namespace WebAPI
                 });
                 c.CustomSchemaIds(c=>c.FullName);//para evitar conflictos usa el namespace
             });
+
+            //para usar la paginacion
+            services.AddScoped<IPaginacion,PaginacionRepositorio>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
