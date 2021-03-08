@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,16 +36,24 @@ namespace Aplicacion.Seguridad
                 _jwtGenerador = jwtGenerador;
             }
             public async Task<UsuarioData> Handle(Ejecuta request, CancellationToken cancellationToken){
+                //buscar usuario
                 var usuario = await _userManager.FindByEmailAsync(request.Email);
                 if(usuario == null){
                     throw new ExceptionHandler(HttpStatusCode.Unauthorized);
                 }
 
+                //agregar roles
+                var resultadoRoles = await _userManager.GetRolesAsync(usuario);
+                var listaRoles = new List<string>(resultadoRoles);
+
+                //checkar password
                 var resultado = await _signInManager.CheckPasswordSignInAsync(usuario,request.Password,false);
+
+                //generar
                 if(resultado.Succeeded){
                     return new UsuarioData{
                         NombreCompleto = usuario.NombreCompleto,
-                        Token = _jwtGenerador.CrearToken(usuario),
+                        Token = _jwtGenerador.CrearToken(usuario,listaRoles),
                         Username = usuario.UserName,
                         Email = usuario.Email,
                         Imagen = null

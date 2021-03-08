@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -63,10 +64,11 @@ namespace Aplicacion.Seguridad
 
                 var resultado = await _userManager.CreateAsync(usuario,request.Password);
 
+                //como recien se crea el rol es nulo
                 if(resultado.Succeeded){
                     return new UsuarioData{
                         NombreCompleto = usuario.NombreCompleto,
-                        Token = _jwtGenerador.CrearToken(usuario),
+                        Token = _jwtGenerador.CrearToken(usuario,null),
                         Username = usuario.UserName,
                         Email=usuario.Email
                     };
