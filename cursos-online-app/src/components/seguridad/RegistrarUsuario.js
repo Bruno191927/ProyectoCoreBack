@@ -1,7 +1,35 @@
 import { Button, Container, Grid, TextField, Typography } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import style from '../Tool/Style';
+import {registrarUsuario} from '../../actions/UsuarioAction';
+
+
 const RegistrarUsuario = () => {
+
+    const [usuario,setUsuario] = useState({
+        NombreCompleto: '',
+        Email : '',
+        Password:'',
+        ConfirmarPassword :'',
+        Username:''
+    });
+
+    const ingresarValoresMemoria = e => {
+        const {name,value} = e.target;
+        setUsuario(anterior => ({
+            ...anterior,
+            [name] :value
+        }))
+    }
+
+    const registrar = e =>{
+        e.preventDefault();
+        registrarUsuario(usuario).then(response=>{
+            console.log("Se registro exitosamente",response);
+            window.localStorage.setItem("token_seguridad",response.data.token);
+        });
+    }
+
     return(
         <Container component="main" maxWidth="md" justify="center">
             <div style={style.paper}>
@@ -10,28 +38,25 @@ const RegistrarUsuario = () => {
                 </Typography>
                 <form style={style.form}>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                            <TextField name="nombre" variant="outlined" fullWidth label="Ingrese sus nombre"/>
+                        <Grid item xs={12} md={12}>
+                            <TextField name="NombreCompleto" value={usuario.NombreCompleto} onChange={ingresarValoresMemoria} variant="outlined" fullWidth label="Ingrese sus nombres y apellidos"/>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField name="apellidos" variant="outlined" fullWidth label="Ingrese sus apellidos"/>
+                            <TextField name="Email" value={usuario.Email} onChange={ingresarValoresMemoria} variant="outlined" fullWidth label="Ingrese su correo electronico"/>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField name="email" variant="outlined" fullWidth label="Ingrese su correo electronico"/>
+                            <TextField name="Username" value={usuario.Username} onChange={ingresarValoresMemoria} variant="outlined" fullWidth label="Ingrese su nombre de Usuario"/>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField name="username" variant="outlined" fullWidth label="Ingrese su nombre de Usuario"/>
+                            <TextField name="Password" value={usuario.Password} onChange={ingresarValoresMemoria} type="password" variant="outlined" fullWidth label="Ingrese su contraseña"/>
                         </Grid>
                         <Grid item xs={12} md={6}>
-                            <TextField name="password" type="password" variant="outlined" fullWidth label="Ingrese su contraseña"/>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <TextField name="confirmacionpassword" type="password" variant="outlined" fullWidth label="Ingrese su contraseña nuevamente"/>
+                            <TextField name="ConfirmarPassword" value={usuario.ConfirmarPassword} onChange={ingresarValoresMemoria} type="password" variant="outlined" fullWidth label="Ingrese su contraseña nuevamente"/>
                         </Grid>
                     </Grid>
                     <Grid container justify="center" spacing={2}>
                         <Grid item xs={12} md={6}>
-                            <Button type="submit" fullWidth variant="contained" color="primary" size="large" style={style.submit}>
+                            <Button type="submit" onClick={registrar} fullWidth variant="contained" color="primary" size="large" style={style.submit}>
                                 Enviar
                             </Button>
                         </Grid>
