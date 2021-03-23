@@ -2,9 +2,11 @@ import { Button, Container, Grid, TextField, Typography } from '@material-ui/cor
 import React, { useEffect, useState } from 'react';
 import { actualizarUsuario, obtenerUsuarioActual } from '../../actions/UsuarioAction';
 import style from '../Tool/Style';
+import { useStateValue } from '../../context/store';
+
 
 const PerfilUsuario = () =>{
-
+    const [{ sesionUsuario}, dispatch] = useStateValue();
     const [usuario,setUsuario] = useState({
         nombreCompleto: '',
         username : '',
@@ -20,9 +22,9 @@ const PerfilUsuario = () =>{
             [name] : value
         }));
     }
-
+    
     useEffect(()=>{
-        obtenerUsuarioActual().then(response => {
+        obtenerUsuarioActual(dispatch).then(response => {
             console.log('Data',response);
             setUsuario(response.data);
         });
@@ -36,7 +38,6 @@ const PerfilUsuario = () =>{
             window.localStorage.setItem("token_seguridad",response.data.token);
         });
     }
-
     return(
         <Container component="main" maxWidth="md" justify="center">
             <div style={style.paper}>
