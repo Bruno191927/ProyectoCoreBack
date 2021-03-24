@@ -7,7 +7,9 @@ export const registrarUsuario = usuario => {
             response => {
                 resolve(response);
             }
-        )
+        ).catch(error=>{
+            resolve(error.response);
+        })
     });
 }
 
@@ -33,6 +35,9 @@ export const actualizarUsuario = (usuario) => {
                 resolve(response);
             }
         )
+        .catch(error=>{
+            resolve(error.response)
+        })
     })
 }
 

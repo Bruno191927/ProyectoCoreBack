@@ -22,9 +22,9 @@ const Login = () => {
     const loginUsuarioBoton = e => {
         e.preventDefault();
         loginUsuario(usuario).then(response => {
-                console.log('Login exitoso',response);
-                window.localStorage.setItem('token_seguridad',response.data.token);
-            })
+            console.log('Login exitoso',response);
+            window.localStorage.setItem('token_seguridad',response.data.token);
+        })
     }
 
 
@@ -39,7 +39,7 @@ const Login = () => {
                     Login de Usuario
                 </Typography>
                 <form style={style.form}>
-                    <TextField variant="outlined" name="Email" value={usuario.Email} onChange={ingresarValores} label="Ingrese username" fullWidth/>
+                    <TextField variant="outlined" name="Email" value={usuario.Email} onChange={ingresarValores} label="Ingrese email" fullWidth/>
                     <TextField variant="outlined" name="Password" value={usuario.Password} onChange={ingresarValores} type="password" label="Ingresa tu contraseña" fullWidth margin="normal"/>
                     <Button type="submit" onClick={loginUsuarioBoton} fullWidth variant="contained" color="primary" style={style.submit}>
                         Enviar

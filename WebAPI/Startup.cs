@@ -113,7 +113,7 @@ namespace WebAPI
             //para utilizar cors
             services.AddCors(
                 p=>p.AddPolicy("corsApp",builder=>{
-                    builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 })
             );
         }

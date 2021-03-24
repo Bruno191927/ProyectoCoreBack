@@ -41,13 +41,14 @@ namespace Aplicacion.Seguridad
                 if(usuario == null){
                     throw new ExceptionHandler(HttpStatusCode.Unauthorized);
                 }
+                //checkar password
+                var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, request.Password, false);
 
                 //agregar roles
                 var resultadoRoles = await _userManager.GetRolesAsync(usuario);
                 var listaRoles = new List<string>(resultadoRoles);
 
-                //checkar password
-                var resultado = await _signInManager.CheckPasswordSignInAsync(usuario,request.Password,false);
+                
 
                 //generar
                 if(resultado.Succeeded){
@@ -58,6 +59,9 @@ namespace Aplicacion.Seguridad
                         Email = usuario.Email,
                         Imagen = null
                     };
+                }
+                else{
+                    throw new ExceptionHandler(HttpStatusCode.BadRequest,new { mensaje = resultado});
                 }
 
                 throw new ExceptionHandler(HttpStatusCode.Unauthorized);

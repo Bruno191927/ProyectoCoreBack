@@ -33,9 +33,25 @@ const PerfilUsuario = () =>{
     const guardarUsuario = e =>{
         e.preventDefault();
         actualizarUsuario(usuario).then(response=>{
-            console.log("Se actualizo",usuario);
-            console.log(response);
-            window.localStorage.setItem("token_seguridad",response.data.token);
+            if(response.status == 200){
+                dispatch({
+                    type:"OPEN_SNACKBAR",
+                    openMensaje:{
+                        open : true,
+                        mensaje : "Se guardaron los cambios de manera exitosa"
+                    }
+                })
+                window.localStorage.setItem("token_seguridad",response.data.token);
+            }
+            else{
+                dispatch({
+                    type : "OPEN_SNACKBAR",
+                    openMensaje:{
+                        open:true,
+                        mensaje:"Error al intentar actualizar: " + Object.keys(response.data.errors)
+                    }
+                })
+            }
         });
     }
     return(
