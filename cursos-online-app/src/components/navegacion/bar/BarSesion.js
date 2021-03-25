@@ -1,8 +1,10 @@
 import { Avatar, Button, Drawer, IconButton, List, ListItem, ListItemText, makeStyles, Toolbar, Typography } from '@material-ui/core';
 import React,{useState} from 'react';
+import { withRouter } from 'react-router-dom';
 import { useStateValue } from '../../../context/store';
 import FotoUsuarioTemp from '../../../logo.svg';
 import { MenuIzquierda } from './menuIzquierda';
+import {MenuDerecha} from './menuDerecha';
 const useStyles = makeStyles((theme)=>({
     seccionDesktop :{
         display:"none",
@@ -34,17 +36,31 @@ const useStyles = makeStyles((theme)=>({
     }
 }));
 
-const BarSesion = () => {
+const BarSesion = (props) => {
 
     const classes = useStyles();
     const [{sesionUsuario}, dispatch ] = useStateValue();
     const [abrirMenuIzquierda,setAbrirMenuIzquierda] = useState(false);
-    
+    const [abrirMenuDerecha,setAbrirMenuDerecha] = useState(false);
+
     const cerrarMenuIzquierda = () => {
         setAbrirMenuIzquierda(false);
     }
     const abrirMenuIzquierdaAction = () =>{
         setAbrirMenuIzquierda(true);
+    }
+
+    const cerrarMenuDerecha = () =>{
+        setAbrirMenuDerecha(false);
+    }
+
+    const salirSesionApp = () =>{
+        localStorage.removeItem("token_seguridad");
+        props.history.push('/auth/login');
+    }
+
+    const abrirMenuDerechaAction = () => {
+        setAbrirMenuDerecha(true);
     }
 
     return (
@@ -60,6 +76,15 @@ const BarSesion = () => {
                     onClick={cerrarMenuIzquierda}
                 >
                     <MenuIzquierda classes={classes} />
+                </div>
+            </Drawer>
+            <Drawer
+                open={abrirMenuDerecha}
+                onClose={cerrarMenuDerecha}
+                anchor="right"    
+            >
+                <div className={classes.list} onClick={cerrarMenuDerecha} onKeyDown={cerrarMenuDerecha}>
+                    <MenuDerecha classes={classes} salirSesion={salirSesionApp} usuario={sesionUsuario ? sesionUsuario.usuario : null}/>
                 </div>
             </Drawer>
             <Toolbar>
@@ -79,7 +104,7 @@ const BarSesion = () => {
                     <Avatar src={FotoUsuarioTemp}></Avatar>
                 </div>
                 <div className={classes.seccionMobile}>
-                    <IconButton color="inherit">
+                    <IconButton color="inherit" onClick={abrirMenuDerechaAction}>
                         <i className="material-icons">more_vert</i>
                     </IconButton>
                 </div>
@@ -89,4 +114,4 @@ const BarSesion = () => {
     );
 };
 
-export default BarSesion;
+export default withRouter(BarSesion);
