@@ -19,6 +19,12 @@ namespace WebAPI
         public static void Main(string[] args)
         {
             //cambio para la migracion
+            /*
+                Para hacer una migracion
+                paso 1 : dotnet ef migrations add "nombre migracion" -p Persistencia/ -s WebAPI/
+                paso 2 : ir a WebAPI
+                paso 3 : dotnet watch run
+            */
             var hostserver = CreateHostBuilder(args).Build();
             using (var ambiente = hostserver.Services.CreateScope()){
                 var services = ambiente.ServiceProvider;
@@ -32,7 +38,6 @@ namespace WebAPI
                     var logging = services.GetRequiredService<ILogger<Program>>();
                     logging.LogError(e,"Ocurrio un error en la migración");
                 }
-
             }
             hostserver.Run();
         }
