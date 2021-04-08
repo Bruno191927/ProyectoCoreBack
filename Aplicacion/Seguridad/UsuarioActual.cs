@@ -52,7 +52,7 @@ namespace Aplicacion.Seguridad
                         Token = _jwtGenerador.CrearToken(usuario,listaRoles),
                         Imagen = null,
                         Email = usuario.Email,
-                        ImagenPefil = imagenCliente
+                        ImagenPerfil = imagenCliente
                     };
 
                 }

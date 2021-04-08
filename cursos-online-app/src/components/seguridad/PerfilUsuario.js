@@ -15,11 +15,7 @@ const PerfilUsuario = () =>{
         email : '',
         password : '',
         confirmarPassword:'',
-        foto : {
-            data:'',
-            nombre:'',
-            extension:''
-        },
+        imagenPerfil: null,
         fotoUrl:''
     });
 
@@ -32,15 +28,16 @@ const PerfilUsuario = () =>{
     }
     
     useEffect(()=>{
-        obtenerUsuarioActual(dispatch).then(response => {
-            console.log('Data',response);
-            setUsuario(response.data);
-        });
+        setUsuario(sesionUsuario.usuario);
+        setUsuario(anterior =>({
+            ...anterior,
+            fotoUrl:sesionUsuario.usuario.imagenPerfil
+        }));
     },[]);
 
     const guardarUsuario = e =>{
         e.preventDefault();
-        actualizarUsuario(usuario).then(response=>{
+        actualizarUsuario(usuario,dispatch).then(response=>{
             if(response.status == 200){
                 dispatch({
                     type:"OPEN_SNACKBAR",
@@ -71,7 +68,7 @@ const PerfilUsuario = () =>{
             console.log(respuesta);
             setUsuario(anterior=>({
                 ...anterior,
-                foto : respuesta,
+                imagenPerfil : respuesta,
                 fotoUrl: fotoUrl
             }));
         })

@@ -69,7 +69,7 @@ namespace Aplicacion.Seguridad
                             Token = _jwtGenerador.CrearToken(usuario,listaRoles),
                             Username = usuario.UserName,
                             Email = usuario.Email,
-                            ImagenPefil=imagenCliente
+                            ImagenPerfil=imagenCliente
                         };
                     }
                     else{

@@ -63,7 +63,7 @@ namespace Aplicacion.Seguridad
                 //Actualizar o guardar imagenes
                 if(request.ImagenPerfil != null){
                     var resultadoImagen = await _context.Documento.Where(x =>x.ObjectoReferencia == new Guid(usuarioIden.Id)).FirstOrDefaultAsync();
-                    if(resultadoImagen != null){
+                    if(resultadoImagen == null){
                         var imagen = new Documento{
                             Contenido = System.Convert.FromBase64String(request.ImagenPerfil.Data),
                             Nombre = request.ImagenPerfil.Nombre,
@@ -108,7 +108,7 @@ namespace Aplicacion.Seguridad
                         Username = usuarioIden.UserName,
                         Email = usuarioIden.Email,
                         Token = _jwtGenerador.CrearToken(usuarioIden,listaRoles),
-                        ImagenPefil = imagenGeneral
+                        ImagenPerfil = imagenGeneral
                     };
                 }
 
