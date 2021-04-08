@@ -51,6 +51,12 @@ namespace WebAPI
             services.AddDbContext<CursosOnlineContext>(opt =>{
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
+            
+
+            //para utilizar cors
+            services.AddCors(o => o.AddPolicy("corsApp", builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            }));
 
             //dapper para pasarle la cadena de conexion a la clase
             services.AddOptions();
@@ -110,12 +116,7 @@ namespace WebAPI
             //para usar la paginacion
             services.AddScoped<IPaginacion,PaginacionRepositorio>();
 
-            //para utilizar cors
-            services.AddCors(
-                p=>p.AddPolicy("corsApp",builder=>{
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                })
-            );
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

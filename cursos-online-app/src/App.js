@@ -9,10 +9,11 @@ import Login from './components/seguridad/Login';
 import AppNavBar from './components/navegacion/AppNavBar';
 import {useStateValue} from './context/store';
 import { obtenerUsuarioActual } from './actions/UsuarioAction';
+import RutaSegura from './components/navegacion/RutaSegura';
 
 function App() {
 
-  const [{sesionUsuario,openSnackbar},dispatch] = useStateValue();
+  const [{openSnackbar},dispatch] = useStateValue();
   const [iniciaApp,setIniciaApp] = useState(false);
 
   useEffect(()=>{
@@ -52,10 +53,18 @@ function App() {
           <AppNavBar/>
           <Grid container>
             <Switch>
-                <Route exact path="/auth/login" component={Login}/>
+              <Route exact path="/auth/login" component={Login}/>
               <Route exact path="/auth/registrar" component={RegistrarUsuario}/>
-              <Route exact path="/auth/perfil" component={PerfilUsuario}/>
-              <Route exact path="/" component={PerfilUsuario}/>
+              <RutaSegura
+                exact
+                path="/auth/perfil"
+                component={PerfilUsuario}
+              />
+              <RutaSegura
+                exact
+                path="/"
+                component={PerfilUsuario}
+              />
             </Switch>
           </Grid>
         </MuithemeProvider>

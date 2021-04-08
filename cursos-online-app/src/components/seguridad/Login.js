@@ -3,8 +3,11 @@ import style from '../Tool/Style';
 import {Avatar, Button, Container, TextField, Typography} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import {loginUsuario} from '../../actions/UsuarioAction';
+import { withRouter } from 'react-router-dom';
+import {useStateValue} from '../../context/store';
 
-const Login = () => {
+const Login = (props) => {
+    const [{usuarioSesion},dispatch] = useStateValue();
 
     const [usuario,setUsuario] = useState({
         Email:'',
@@ -21,9 +24,21 @@ const Login = () => {
 
     const loginUsuarioBoton = e => {
         e.preventDefault();
-        loginUsuario(usuario).then(response => {
-            console.log('Login exitoso',response);
-            window.localStorage.setItem('token_seguridad',response.data.token);
+        loginUsuario(usuario,dispatch).then(response => {
+            console.log(response);
+            if(response.status === 200){
+                window.localStorage.setItem('token_seguridad',response.data.token);
+                props.history.push("/");
+            }
+            else{
+                dispatch({
+                    type:"OPEN_SNACKBAR",
+                    openMensaje:{
+                        open:true,
+                        mensaje : "Las credenciales del usuario son incorrectas"
+                    }
+                })
+            }
         })
     }
 
@@ -50,4 +65,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default withRouter(Login);

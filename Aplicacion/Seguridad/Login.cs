@@ -53,11 +53,12 @@ namespace Aplicacion.Seguridad
                 //agregar roles
                 var resultadoRoles = await _userManager.GetRolesAsync(usuario);
                 var listaRoles = new List<string>(resultadoRoles);
+                var imagenPerfil = await _context.Documento.Where(x=>x.ObjectoReferencia == new Guid(usuario.Id)).FirstOrDefaultAsync();
 
                 //generar
                 if(resultado.Succeeded){
                     //obtener imagen
-                    var imagenPerfil = await _context.Documento.Where(x=>x.ObjectoReferencia == new Guid(usuario.Id)).FirstOrDefaultAsync();
+                    
                     if(imagenPerfil != null){
                         var imagenCliente = new ImagenGeneral{
                             Data = Convert.ToBase64String(imagenPerfil.Contenido),
@@ -81,9 +82,6 @@ namespace Aplicacion.Seguridad
                             Imagen = null
                         };
                     }
-                }
-                else{
-                    throw new ExceptionHandler(HttpStatusCode.BadRequest,new { mensaje = resultado});
                 }
 
                 throw new ExceptionHandler(HttpStatusCode.Unauthorized);
