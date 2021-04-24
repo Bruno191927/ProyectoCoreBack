@@ -6,10 +6,13 @@ function RutaSegura({component : Component, ...rest}){
     return(
         <Route
             {...rest}
-            render = {
-                (props)=> sesionUsuario 
-                ?(sesionUsuario.autenticado == true ?(<Component {...props} {...rest}/>):<Redirect to="/auth/login"/>)
-                :<Redirect to="/auth/login"/>
+            render = {(props)=> 
+                sesionUsuario ?(
+                    sesionUsuario.autenticado == true ?(
+                        <Component {...props} {...rest}/>
+                    )
+                    :<Redirect to="/auth/login"/>
+                ):<Redirect to="/auth/login"/>
             }
         />
     );

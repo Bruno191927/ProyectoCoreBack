@@ -1,19 +1,21 @@
-const initialState = {
+const initialState  = {
     open : false,
-    mensaje :''
-}
+    mensaje: ""
+};
 
-const openSnackBarReducer = (state=initialState,action) => {
-    switch(action.type){
-        case "OPEN_SNACKBAR":
+const openSnackbarReducer = (state = initialState, action) => {
+    console.log("action", action);
+
+    switch(action.type) {
+        case "OPEN_SNACKBAR" :
             return {
                 ...state,
-                open:action.openMensaje.open,
+                open : action.openMensaje.open,
                 mensaje : action.openMensaje.mensaje
-            }
-        default :
+            };
+        default : 
             return state;
     }
 }
 
-export default openSnackBarReducer;
+export default openSnackbarReducer;

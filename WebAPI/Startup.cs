@@ -47,22 +47,23 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //cadena de conexion
-            services.AddDbContext<CursosOnlineContext>(opt =>{
-                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-            });
-            
-
             //para utilizar cors
             services.AddCors(o => o.AddPolicy("corsApp", builder => {
                 builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
             }));
 
+            //cadena de conexion
+            services.AddDbContext<CursosOnlineContext>(opt =>{
+                opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+            
             //dapper para pasarle la cadena de conexion a la clase
             services.AddOptions();
             services.Configure<ConexionConfiguracion>(Configuration.GetSection("ConnectionStrings"));
-
+            
+            //MediatR
             services.AddMediatR(typeof(Consulta.Handler).Assembly);
+
             //para q requiera en los endpoints q el usuario este autorizado
             services.AddControllers(opt =>{
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
@@ -72,16 +73,17 @@ namespace WebAPI
             
             //configuracion del core identity
             var builder = services.AddIdentityCore<Usuario>();
-
             var identityBuilder = new IdentityBuilder(builder.UserType,builder.Services);
+
             identityBuilder.AddRoles<IdentityRole>();//para manejo de roles seecion 17
             identityBuilder.AddClaimsPrincipalFactory<UserClaimsPrincipalFactory<Usuario,IdentityRole>>();//para manejar token con roles seccion 17
             identityBuilder.AddEntityFrameworkStores<CursosOnlineContext>();
             identityBuilder.AddSignInManager<SignInManager<Usuario>>();//administrador de login de accesos
+
             //para registrar el usuario
             services.TryAddSingleton<ISystemClock,SystemClock>();
-            //inyectar el jwtgenerador
-            services.AddScoped<IJwtGenerador,JwtGenerador>();
+
+            
 
             //para q los enpoints necesiten la autenticacion
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Mi palabra secreta"));
@@ -93,7 +95,10 @@ namespace WebAPI
                     ValidateIssuer = false //para enviar a cualquiera
                 };
             });
-            
+
+            //inyectar el jwtgenerador
+            services.AddScoped<IJwtGenerador,JwtGenerador>();
+
             //para poder usar la interfaz de usuariosesion
             services.AddScoped<IUsuarioSesion,UsuarioSesion>();
 
@@ -103,6 +108,8 @@ namespace WebAPI
             //para poder usar el dapper
             services.AddTransient<IFactoryConnection,FactoryConnection>();
             services.AddScoped<IInstructor,InstructorRepositorio>();
+            //para usar la paginacion
+            services.AddScoped<IPaginacion,PaginacionRepositorio>();
 
             //para usar swagger
             services.AddSwaggerGen(c => {
@@ -113,8 +120,7 @@ namespace WebAPI
                 c.CustomSchemaIds(c=>c.FullName);//para evitar conflictos usa el namespace
             });
 
-            //para usar la paginacion
-            services.AddScoped<IPaginacion,PaginacionRepositorio>();
+            
 
             
         }
@@ -122,10 +128,11 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            app.UseCors("corsApp");
             //usar middleware
             app.UseMiddleware<ErrorHandlerMiddleware>();
-            //usar cors
-            app.UseCors("corsApp");
+            
 
             if (env.IsDevelopment())
             {
@@ -139,7 +146,8 @@ namespace WebAPI
             app.UseAuthentication();
 
             app.UseRouting();
-
+            //usar cors
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
