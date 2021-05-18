@@ -27,14 +27,15 @@ namespace Aplicacion.Documentos
             
             public async Task<Unit> Handle(Ejecuta request, CancellationToken cancellationToken)
             {
-                var documento = await _context.Documento.Where(x => x.ObjectoReferencia == request.ObjectoReferencia).FirstAsync();
+                var documento = await _context.Documento.Where(x => x.ObjectoReferencia == request.ObjectoReferencia).FirstOrDefaultAsync();
                 if(documento == null){
                     var doc = new Documento{
                         Contenido = Convert.FromBase64String(request.Data),
                         Nombre = request.Nombre,
                         Extension = request.Extension,
                         DocumentoId = Guid.NewGuid(),
-                        FechaCreacion = DateTime.UtcNow
+                        FechaCreacion = DateTime.UtcNow,
+                        ObjectoReferencia = request.ObjectoReferencia ?? Guid.Empty
                     };
                     _context.Documento.Add(doc);
                 }
