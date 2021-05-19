@@ -7,8 +7,9 @@ import ImageUploader from 'react-images-upload';
 import {v4 as uuidv4} from 'uuid';
 import {obtenerDataImagen} from '../../actions/ImagenAction';
 import { guardarCurso } from '../../actions/CursoAction';
+import {useStateValue} from '../../context/store';
 const NuevoCurso = () => {
-
+    const [{sesionUsuario},dispatch] = useStateValue();
     const [fechaSeleccionada,setFechaSeleccionada] = useState(new Date());
     const [imagenCurso, setImagenCurso] = useState(null);
     const [curso,setCurso] = useState({
@@ -17,6 +18,17 @@ const NuevoCurso = () => {
         precio : 0.0,
         promocion : 0.0
     });
+
+    const resetearForm = () => {
+        setFechaSeleccionada(new Date());
+        setImagenCurso(null);
+        setCurso({
+            titulo: '',
+            descripcion: '',
+            precio : 0.0,
+            promocion : 0.0
+        });
+    }
 
     const ingresarValoresMemoria = e => {
         const {name,value} = e.target;
@@ -34,29 +46,61 @@ const NuevoCurso = () => {
         });
     }
 
-    const guardarCursoBoton = e =>{
+    const guardarCursoBoton = e => {
         e.preventDefault();
         const cursoId = uuidv4();
+
         const objetoCurso = {
-            titulo: curso.titulo,
+            titulo : curso.titulo,
             descripcion : curso.descripcion,
             promocion: parseFloat(curso.promocion || 0.0),
-            precio: parseFloat(curso.precio || 0.0),
-            fechaPublicacion : fechaSeleccionada,
-            cursoId : cursoId
+            precio :  parseFloat(curso.precio || 0.0),
+            fechaPublicacion :  fechaSeleccionada,
+            cursoId : cursoId 
         };
 
-        const objetoImagen = {
-            nombre : imagenCurso.nombre,
-            data : imagenCurso.data,
-            extension : imagenCurso.extension,
-            objetoReferencia : cursoId
-        }
+        let objetoImagen = null;
 
-        guardarCurso(objetoCurso,objetoImagen)
-        .then(respuestas=>{
-            console.log('respuestas arreglo',respuestas);
-        });
+        if(imagenCurso){
+            objetoImagen = {
+                nombre : imagenCurso.nombre,
+                data : imagenCurso.data,
+                extension : imagenCurso.extension,
+                objetoReferencia : cursoId
+            };
+        }
+        
+                
+
+        guardarCurso(objetoCurso, objetoImagen).then(respuestas => {
+            const responseCurso = respuestas[0];
+            const responseImagen = respuestas[1];
+            let mensaje = "";
+
+            if(responseCurso.status === 200) {
+                mensaje += "Se guardo exitosamente el curso"
+                resetearForm();
+            }else{
+                mensaje += "Errores :" + Object.keys(responseCurso.data.errors);
+            }
+
+            if(responseImagen) {
+                if(responseImagen.status === 200){
+                    mensaje += ",Se guardo la imagen correctamente"
+                }else{
+                    mensaje += ",Errores en imagen:" + Object.keys(responseImagen.data.errors);
+                }
+            }
+            
+            dispatch({
+                type : "OPEN_SNACKBAR",
+                openMensaje : {
+                    open : true,
+                    mensaje : mensaje
+                }
+            })
+
+        })
     }
 
     const fotoKey = uuidv4();
